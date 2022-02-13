@@ -1,0 +1,26 @@
+{"data" : [{
+        "firstName":"Jane",
+        "lastName":"Cooper",
+        "type":0,
+        "email":"bill.brown@nztechnologygroup.com",
+        "phoneNumber":"+1 (345) 863 2098",
+        "userName":"janecooper"
+    },
+    {
+        "firstName":"Cody",
+        "lastName":"Fisher",
+        "type":1,
+        "email":"bill.brown@nztechnologygroup.com",
+        "phoneNumber":"+1 (345) 863 2098",
+        "userName":"janecooper"
+    },
+    {
+        "firstName":"Esther",
+        "lastName":"Howard",
+        "type":0,
+        "email":"bill.brown@nztechnologygroup.com",
+        "phoneNumber":"+1 (345) 863 2098",
+        "userName":"janecooper"
+    }
+]
+}
