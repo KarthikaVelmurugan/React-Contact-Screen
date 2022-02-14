@@ -1,56 +1,49 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Search, FiMail, Mail, PhoneCall, User } from "react-feather";
-
 import data from "../../../mockdata/contactData.json";
-import SearchIcon from "../SearchIcon/SearchIcon";
+import { Plus, Search, FiMail, Mail, PhoneCall, User } from "react-feather";
+import ContactDetails from "../../ContactDetails";
 
-import ReactSearchBox from "react-search-box";
-import Context from "@mui/base/TabsUnstyled/TabsContext";
 export default function ContactCard() {
-  const [contacts, setContacts] = useState([{
-    "firstName":"Jane",
-    "lastName":"Cooper",
-    "type":0,
-    "email":"bill.brown@nztechnologygroup.com",
-    "phoneNumber":"+1 (345) 863 2098",
-    "userName":"janecooper"
-},
-{
-    "firstName":"Jane",
-    "lastName":"Fisher",
-    "type":1,
-    "email":"bill.brown@nztechnologygroup.com",
-    "phoneNumber":"+1 (345) 863 2098",
-    "userName":"janecooper"
-},
-{
-    "firstName":"Esther",
-    "lastName":"Howard",
-    "type":0,
-    "email":"bill.brown@nztechnologygroup.com",
-    "phoneNumber":"+1 (345) 863 2098",
-    "userName":"janecooper"
-}
-]);
-  const [searchString,setSearchString] = useState("");
+  const [initalContacts, setinitialContacts] = useState(data && data.data);
+  const [contacts, setContacts] = useState(initalContacts);
+  const [alert, setAlert] = useState({
+    message: "No search result found in ",
+    searchString: "",
+  });
 
-  // useEffect(() => {
-  //   console.log("Coming",contacts );
-  // }, [contacts]);
+  // Handlesearch
+  const handleSearch = (searchString) => {
+    if (searchString === "") {
+      console.log("Empty string", searchString, "Contacts", contacts);
+      setContacts(initalContacts);
+      setAlert({ ...alert, searchString: "" });
 
-  const handleSearch = () => {
-    console.log(searchString,"SearchString")
-    // console.log(event.target.value,"event")
-    console.log(contacts && contacts, "contacts")
-     const filterData = contacts && contacts.filter((res) => res.firstName == searchString || res.lastName==searchString) 
-     filterData && filterData.length > 0 && setContacts(filterData && filterData)
-     console.log("filterData",filterData)
+      return;
+    }
+
+    const filterData =
+      contacts &&
+      contacts.filter(
+        (res) =>
+          res["firstName"]
+            .toString()
+            .toLowerCase()
+            .includes(searchString.toLowerCase()) ||
+          res["lastName"]
+            .toString()
+            .toLowerCase()
+            .includes(searchString.toLowerCase())
+      );
+
+    filterData && filterData.length > 0
+      ? setContacts(filterData && filterData)
+      : setAlert({ ...alert, searchString: searchString });
+
+    console.log("filterData", filterData);
   };
   return (
     <div>
       <div class="flex flex-col p-12 gap-16">
-        {/* <SearchIcon contacts = {contacts} setContacts= {setContacts}></SearchIcon>  */}
-
         <div className="flex justify-between">
           <div className="flex">
             <div className="text-add-contact-color relative left-9 top-4 ">
@@ -59,25 +52,8 @@ export default function ContactCard() {
             <input
               type="search"
               className="p-5 pl-11 h-14 w-96 border-2 rounded-lg text-xl text-gray-500 no-underline outline-0"
-              onChange={(event) => setSearchString(event.target.value)}
+              onChange={(event) => handleSearch(event.target.value)}
             />
-            <button onClick={()=>handleSearch()}>Submit</button>
-
-
-            {/* <div className="h-[200px] bg-red-200 w-[500px] p-14">
-{console.log("filterdata",filterData)}
-  {filterData && filterData.map((e)=>(
-     <div>{e.firstName}</div>
-   
-  ))}
- 
-</div> */}
-
-            {/* <div className="h-[50px] w-[380px] border-[2.4px] flex gap-2 p-[10px] border-search-icon-border rounded-lg">
-        <div className="text-add-contact-color"><Search></Search></div>
-       <input className="text-add-contact-color font-normal  text-[18px]" type="search" />
-
-      </div> */}
           </div>
           <div className="group h-[50px] w-[200px] border-[2.4px] flex gap-2 p-[10px] border-search-icon-border rounded-lg hover:bg-box-text-color hover:text-search-icon-border">
             <div className="text-add-contact-color group-hover:text-search-icon-border">
@@ -90,14 +66,10 @@ export default function ContactCard() {
         </div>
 
         <div className="flex justify-evenly">
-          {console.log("contacts",contacts && contacts.data)}
-          {contacts && 
+          {alert.searchString === "" ? (
+            contacts &&
             contacts.map((contact, index) => (
-
-            
-            
               <div className="px-14 py-8 border-gray-200 border rounded-lg shadow-md flex flex-col gap-2">
-                {console.log("contact",contact)}
                 {/* Name */}
                 <div className="flex justify-between">
                   <div className="flex gap-3 items-center">
@@ -105,15 +77,22 @@ export default function ContactCard() {
                       {contact.firstName + " " + contact.lastName}
                     </div>
                     <div className="badge">
-                      {contact.type == 0 ? "Billing" : "Others"}
+                      {contact.type === 0 ? "Billing" : "Others"}
                     </div>
                   </div>
                   <div className="avatar">
-                    {/* {contact.firstName.charAt(0) + contact.lastName.charAt(0)} */}
+                    {contact.firstName.charAt(0) + contact.lastName.charAt(0)}
                   </div>
                 </div>
 
                 <div class="flex flex-col gap-3">
+                  {/* <ContactDetails
+                    headStyle="text-gray-500"
+                    iconIndex="1"
+                    subheadStyle="text-sky-600"
+                    value={contact.email}
+                  ></ContactDetails> */}
+
                   <div className="flex gap-3">
                     <div className="text-gray-500">
                       <Mail></Mail>
@@ -138,7 +117,17 @@ export default function ContactCard() {
                   </div>
                 </div>
               </div>
-            ))}
+            ))
+          ) : (
+            <div className="flex gap-2">
+              <div className="text-lg text-gray-800 font-bold">
+                {alert && alert.message}
+              </div>
+              <div className="text-lg text-red-600 font-bold">
+                {alert && alert.searchString}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
